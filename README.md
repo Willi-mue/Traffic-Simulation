@@ -12,5 +12,15 @@ Ecken:
     Linksunten: c
     Rechtsunten: d
 ````
+````
+Weitere Steuerung:
+
+P: Stoppen
+E: Speed +
+W: Speed -
+Q: Linien anzeigen (An/Aus)
+R: Reset
+Escape: Exit
+````
 
 ![Bild 1](verkehrs_sim.jpg)
