@@ -13,23 +13,25 @@ class main_application(QWidget):
 
         self.setWindowIcon(QIcon("bilder/icon.png"))
         # Setzen des Icons
-        my_app_id = 'by_Müller_Willi.Verkehrs_Simulation.1.0'
+        my_app_id = 'by_Müller_Willi.Verkehrs_Simulation.1.1'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(my_app_id)
 
         self.setWindowTitle('Verkehrs_Simulation')
 
-        self.hoehe = 1080
-        self.breite = 1920
+        self.scale = 1.5
 
-        self.resize(self.breite, self.hoehe)
-        self.setMinimumSize(self.breite, self.hoehe)
+        self.height = int(1080 * self.scale)
+        self.width = int(1920 * self.scale)
+
+        self.resize(self.width, self.height)
+        self.setMinimumSize(self.width, self.height)
 
         self.sim = QLabel(self)
         self.figures = QLabel(self)
 
         self.show_line = False
         self.stop = False
-        self.tile_size = 20
+        self.tile_size = int(self.width * 1/96)
         self.ampel_cords = []
         
         self.ampel_swap = True
@@ -70,10 +72,10 @@ class main_application(QWidget):
         self.first_draw()
 
     def first_draw(self):
-        canvas = QPixmap(self.breite, self.hoehe)
+        canvas = QPixmap(self.width, self.height)
         canvas.fill(Qt.black)
         self.sim.setPixmap(canvas)
-        self.sim.setGeometry(0, 0, self.breite, self.hoehe)
+        self.sim.setGeometry(0, 0, self.width, self.height)
 
         pen = QPen()
         pen.setWidth(2)
@@ -143,10 +145,10 @@ class main_application(QWidget):
 
     def paintEvent(self, event):
         self.setWindowTitle(str(self.speed))
-        canvas = QPixmap(self.breite, self.hoehe)
+        canvas = QPixmap(self.width, self.height)
         canvas.fill(QColor(0, 0, 0, 0))
         self.figures.setPixmap(canvas)
-        self.figures.setGeometry(0, 0, self.breite, self.hoehe)
+        self.figures.setGeometry(0, 0, self.width, self.height)
 
         painter_figures = QPainter(self.figures.pixmap())
 
@@ -169,7 +171,7 @@ class main_application(QWidget):
     def keyPressEvent(self, event):
         key = event.key()
 
-        if key == Qt.Key_P:
+        if key == Qt.Key_E:
             if not self.stop:
                 self.timer.stop()
                 self.stop = True
@@ -177,13 +179,13 @@ class main_application(QWidget):
                 self.stop = False
                 self.timer.start(self.speed)
 
-        if key == Qt.Key_E:
+        if key == Qt.Key_W:
             self.speed += 1
             if not self.stop:
                 self.timer.start(self.speed)
             self.update()
 
-        if key == Qt.Key_W:
+        if key == Qt.Key_S:
             if self.speed - 1 >= 0:
                 self.speed -= 1
             if not self.stop:
