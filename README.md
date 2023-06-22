@@ -22,7 +22,7 @@ Q: Show lines (On/Off)
 R: Reset
 Escape: Exit
 ````
-![Bild 1](verkehrs_sim.jpg)
+![Bild 1](pics/verkehrs_sim.jpg)
 
 # Verkehrssimulation [GER]
 Dies ist eine Verkehrssimulation die mit jeglicher Karte funktioniert, wenn sie aus folgenden Parametern besteht.
@@ -49,4 +49,4 @@ R: Reset
 Escape: Exit
 ````
 
-![Bild 1](verkehrs_sim.jpg)
+![Bild 1](pics/verkehrs_sim.jpg)
