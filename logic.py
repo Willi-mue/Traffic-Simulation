@@ -2,10 +2,12 @@ import random
 
 
 def read_map():
-    file = open('map.txt', 'r')
+    file = open('maps/map1.txt', 'r')
     Lines = file.readlines()
     return Lines
 
+#refactor
+karte = read_map()
 
 def slow(effekt=80):
     n = random.randint(0, effekt)
@@ -69,7 +71,7 @@ def check_car_front(aktueller_key, autos: dict):
     return True
 
 
-karte = read_map()
+
 
 
 def abbiegen_random(x, y, direction):

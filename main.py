@@ -11,7 +11,7 @@ class main_application(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowIcon(QIcon("bilder/icon.png"))
+        self.setWindowIcon(QIcon("assets/icon.png"))
         # Setzen des Icons
         my_app_id = 'by_Müller_Willi.Verkehrs_Simulation.1.1'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(my_app_id)
@@ -53,21 +53,21 @@ class main_application(QWidget):
 
         self.setWindowTitle(str(self.speed))
 
-        self.links_oben = QImage("bilder/links_oben.png")
-        self.rechts_oben = QImage("bilder/rechts_oben.png")
-        self.links_unten = QImage("bilder/links_unten.png")
-        self.rechts_unten = QImage("bilder/rechts_unten.png")
-        self.horizontal = QImage("bilder/horizontal.png")
-        self.vertikal = QImage("bilder/vertikal.png")
+        self.links_oben = QImage("assets/links_oben.png")
+        self.rechts_oben = QImage("assets/rechts_oben.png")
+        self.links_unten = QImage("assets/links_unten.png")
+        self.rechts_unten = QImage("assets/rechts_unten.png")
+        self.horizontal = QImage("assets/horizontal.png")
+        self.vertikal = QImage("assets/vertikal.png")
 
-        self.ampel1 = QImage("bilder/ampel_1.png")
-        self.ampel2 = QImage("bilder/ampel_2.png")
+        self.ampel1 = QImage("assets/ampel_1.png")
+        self.ampel2 = QImage("assets/ampel_2.png")
 
-        self.up = QImage("bilder/up.png")
-        self.down = QImage("bilder/down.png")
-        self.left = QImage("bilder/left.png")
-        self.right = QImage("bilder/right.png")
-        self.point = QImage("bilder/point.png")
+        self.up = QImage("assets/up.png")
+        self.down = QImage("assets/down.png")
+        self.left = QImage("assets/left.png")
+        self.right = QImage("assets/right.png")
+        self.point = QImage("assets/point.png")
 
         self.first_draw()
 
