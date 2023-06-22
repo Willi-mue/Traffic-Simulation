@@ -28,14 +28,21 @@ class main_application(QWidget):
         self.figures = QLabel(self)
 
         self.show_line = False
-
-        self.counter = 0
         self.stop = False
         self.tile_size = 20
-        self.ampel_tick = True
-        self.cars = {}
         self.ampel_cords = []
-        self.ampel_tick_rate = 32
+        
+        self.ampel_swap = True
+        self.ampel_swap_rate = 32
+
+        self.count_time = 0
+
+        # refactore
+        self.cars = {}
+        make_cars(self.cars, anzahl=80, right_cars=25)
+        # self.cars = All_cars(amount = 80, right_cars = 25, trucks = 2)
+
+
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.animation)
@@ -61,7 +68,6 @@ class main_application(QWidget):
         self.point = QImage("bilder/point.png")
 
         self.first_draw()
-        make_cars(self.cars, anzahl=80, right_cars=25)
 
     def first_draw(self):
         canvas = QPixmap(self.breite, self.hoehe)
@@ -120,17 +126,18 @@ class main_application(QWidget):
 
         self.setWindowTitle(str(self.speed))
 
-        if self.counter % self.ampel_tick_rate == 0 or self.counter == 0:
-            if self.ampel_tick:
-                self.ampel_tick = False
+        if self.count_time % self.ampel_swap_rate == 0 or self.count_time == 0:
+            if self.ampel_swap:
+                self.ampel_swap = False
             else:
-                self.ampel_tick = True
+                self.ampel_swap = True
 
-        self.counter += 1
+        self.count_time += 1
 
+        # draw cars
         for key in self.cars:
             self.cars[key].look_under()
-            self.cars[key].drive(key, self.cars, self.ampel_tick)
+            self.cars[key].drive(key, self.cars, self.ampel_swap)
 
         self.update()
 
@@ -143,7 +150,7 @@ class main_application(QWidget):
 
         painter_figures = QPainter(self.figures.pixmap())
 
-        if self.ampel_tick:
+        if self.ampel_swap:
             for i in self.ampel_cords:
                 painter_figures.drawImage(QRect((i[1] * self.tile_size), (i[0] * self.tile_size),
                                                 self.tile_size, self.tile_size), self.ampel1)
