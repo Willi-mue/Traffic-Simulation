@@ -53,6 +53,7 @@ class main_application(QWidget):
 
         self.setWindowTitle(str(self.speed))
 
+        # make dict with Qrect not QImage
         self.links_oben = QImage("assets/links_oben.png")
         self.rechts_oben = QImage("assets/rechts_oben.png")
         self.links_unten = QImage("assets/links_unten.png")
@@ -77,14 +78,13 @@ class main_application(QWidget):
         self.sim.setPixmap(canvas)
         self.sim.setGeometry(0, 0, self.width, self.height)
 
-        pen = QPen()
-        pen.setWidth(2)
-        pen.setColor(Qt.black)
-
         painter_sim = QPainter(self.sim.pixmap())
 
+        # make load map better 
         for i in range(len(karte)):
             for j in range(len(karte[i])):
+               
+
                 if karte[i][j] == "-":
                     painter_sim.drawImage(QRect((j * self.tile_size), (i * self.tile_size),
                                                 self.tile_size, self.tile_size), self.horizontal)
@@ -136,7 +136,7 @@ class main_application(QWidget):
 
         self.count_time += 1
 
-        # draw cars
+        # make better car engine
         for key in self.cars:
             self.cars[key].look_under()
             self.cars[key].drive(key, self.cars, self.ampel_swap)
@@ -151,7 +151,8 @@ class main_application(QWidget):
         self.figures.setGeometry(0, 0, self.width, self.height)
 
         painter_figures = QPainter(self.figures.pixmap())
-
+        
+        # make better draws
         if self.ampel_swap:
             for i in self.ampel_cords:
                 painter_figures.drawImage(QRect((i[1] * self.tile_size), (i[0] * self.tile_size),
@@ -171,6 +172,7 @@ class main_application(QWidget):
     def keyPressEvent(self, event):
         key = event.key()
 
+        # stop sim
         if key == Qt.Key_E:
             if not self.stop:
                 self.timer.stop()
@@ -179,12 +181,14 @@ class main_application(QWidget):
                 self.stop = False
                 self.timer.start(self.speed)
 
+        # speedup sim
         if key == Qt.Key_W:
             self.speed += 1
             if not self.stop:
                 self.timer.start(self.speed)
             self.update()
 
+        # speeddown sim
         if key == Qt.Key_S:
             if self.speed - 1 >= 0:
                 self.speed -= 1
@@ -192,6 +196,7 @@ class main_application(QWidget):
                 self.timer.start(self.speed)
             self.update()
 
+        # show direction lines
         if key == Qt.Key_Q:
             if not self.show_line:
                 self.show_line = True
@@ -202,19 +207,17 @@ class main_application(QWidget):
                 self.first_draw()
                 self.update()
 
+        # reset
         if key == Qt.Key_R:
             make_cars(self.cars, anzahl=80, right_cars=25)
 
+        # exit
         if key == Qt.Key_Escape:
             sys.exit()
+    
 
-
-def main():
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     application = main_application()
     application.show()
     sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()
