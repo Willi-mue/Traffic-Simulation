@@ -31,20 +31,15 @@ class main_application(QWidget):
 
         self.show_line = False
         self.stop = False
-        self.tile_size = int(self.width * 1/96)
+        self.tile_size = int(self.width * 1 / 96)
         self.ampel_cords = []
-        
+
         self.ampel_swap = True
         self.ampel_swap_rate = 32
 
         self.count_time = 0
 
-        # refactore
-        self.cars = {}
-        make_cars(self.cars, anzahl=80, right_cars=25)
-        # self.cars = All_cars(amount = 80, right_cars = 25, trucks = 2)
-
-
+        self.cars = All_cars('maps/map1.txt', normal=30, right_cars=20)
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.animation)
@@ -53,22 +48,21 @@ class main_application(QWidget):
 
         self.setWindowTitle(str(self.speed))
 
-        # make dict with Qrect not QImage
-        self.links_oben = QImage("assets/links_oben.png")
-        self.rechts_oben = QImage("assets/rechts_oben.png")
-        self.links_unten = QImage("assets/links_unten.png")
-        self.rechts_unten = QImage("assets/rechts_unten.png")
-        self.horizontal = QImage("assets/horizontal.png")
-        self.vertikal = QImage("assets/vertikal.png")
-
-        self.ampel1 = QImage("assets/ampel_1.png")
-        self.ampel2 = QImage("assets/ampel_2.png")
-
-        self.up = QImage("assets/up.png")
-        self.down = QImage("assets/down.png")
-        self.left = QImage("assets/left.png")
-        self.right = QImage("assets/right.png")
-        self.point = QImage("assets/point.png")
+        self.pics = {
+            "links_oben": QImage("assets/links_oben.png"),
+            "rechts_oben": QImage("assets/rechts_oben.png"),
+            "links_unten": QImage("assets/links_unten.png"),
+            "rechts_unten": QImage("assets/rechts_unten.png"),
+            "horizontal": QImage("assets/horizontal.png"),
+            "vertikal": QImage("assets/vertikal.png"),
+            "ampel1": QImage("assets/ampel_1.png"),
+            "ampel2": QImage("assets/ampel_2.png"),
+            "up": QImage("assets/up.png"),
+            "down": QImage("assets/down.png"),
+            "left": QImage("assets/left.png"),
+            "right": QImage("assets/right.png"),
+            "point": QImage("assets/point.png"),
+        }
 
         self.first_draw()
 
@@ -80,49 +74,52 @@ class main_application(QWidget):
 
         painter_sim = QPainter(self.sim.pixmap())
 
-        # make load map better 
-        for i in range(len(karte)):
-            for j in range(len(karte[i])):
-               
+        for y, i in enumerate(self.cars.street):
+            for x, j in enumerate(i):
+                match j:
+                    case "-":
+                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                                                    self.tile_size, self.tile_size), self.pics["horizontal"])
+                    case "|":
+                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                                                    self.tile_size, self.tile_size), self.pics["vertikal"])
+                    case "T":
+                        self.ampel_cords.append([y, x])
 
-                if karte[i][j] == "-":
-                    painter_sim.drawImage(QRect((j * self.tile_size), (i * self.tile_size),
-                                                self.tile_size, self.tile_size), self.horizontal)
-                elif karte[i][j] == "|":
-                    painter_sim.drawImage(QRect((j * self.tile_size), (i * self.tile_size),
-                                                self.tile_size, self.tile_size), self.vertikal)
-                elif karte[i][j] == "T":
-                    self.ampel_cords.append([i, j])
-
-                elif karte[i][j] == "a":
-                    painter_sim.drawImage(QRect((j * self.tile_size), (i * self.tile_size),
-                                                self.tile_size, self.tile_size), self.links_oben)
-                elif karte[i][j] == "b":
-                    painter_sim.drawImage(QRect((j * self.tile_size), (i * self.tile_size),
-                                                self.tile_size, self.tile_size), self.rechts_oben)
-                elif karte[i][j] == "c":
-                    painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                self.tile_size, self.tile_size), self.links_unten)
-                elif karte[i][j] == "d":
-                    painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                self.tile_size, self.tile_size), self.rechts_unten)
+                    case "a":
+                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                                                    self.tile_size, self.tile_size), self.pics["links_oben"])
+                    case "b":
+                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                                                    self.tile_size, self.tile_size), self.pics["rechts_oben"])
+                    case "c":
+                        painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                    self.tile_size, self.tile_size), self.pics["links_unten"])
+                    case "d":
+                        painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                    self.tile_size, self.tile_size), self.pics["rechts_unten"])
+                    case _:
+                        pass
 
                 if self.show_line:
-                    if karte[i][j] == ">":
-                        painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                    self.tile_size, self.tile_size), self.right)
-                    elif karte[i][j] == "<":
-                        painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                    self.tile_size, self.tile_size), self.left)
-                    elif karte[i][j] == "v":
-                        painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                    self.tile_size, self.tile_size), self.down)
-                    elif karte[i][j] == "^":
-                        painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                    self.tile_size, self.tile_size), self.up)
-                    elif karte[i][j] == ".":
-                        painter_sim.drawImage(QRect(j * self.tile_size, i * self.tile_size,
-                                                    self.tile_size, self.tile_size), self.point)
+                    match j:
+                        case ">":
+                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                        self.tile_size, self.tile_size), self.pics["right"])
+                        case "<":
+                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                        self.tile_size, self.tile_size), self.pics["left"])
+                        case "v":
+                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                        self.tile_size, self.tile_size), self.pics["down"])
+                        case "^":
+                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                        self.tile_size, self.tile_size), self.pics["up"])
+                        case ".":
+                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                                                        self.tile_size, self.tile_size), self.pics["point"])
+                        case _:
+                            pass
 
     def animation(self):
 
@@ -136,10 +133,9 @@ class main_application(QWidget):
 
         self.count_time += 1
 
-        # make better car engine
-        for key in self.cars:
-            self.cars[key].look_under()
-            self.cars[key].drive(key, self.cars, self.ampel_swap)
+        for auto in self.cars.all_cars:
+            auto.get_tile()
+            auto.drive(auto_list=self.cars.all_cars, ampel_setting=self.ampel_swap)
 
         self.update()
 
@@ -151,23 +147,21 @@ class main_application(QWidget):
         self.figures.setGeometry(0, 0, self.width, self.height)
 
         painter_figures = QPainter(self.figures.pixmap())
-        
-        # make better draws
+
         if self.ampel_swap:
             for i in self.ampel_cords:
                 painter_figures.drawImage(QRect((i[1] * self.tile_size), (i[0] * self.tile_size),
-                                                self.tile_size, self.tile_size), self.ampel1)
+                                                self.tile_size, self.tile_size), self.pics["ampel1"])
         else:
             for i in self.ampel_cords:
                 painter_figures.drawImage(QRect((i[1] * self.tile_size), (i[0] * self.tile_size),
-                                                self.tile_size, self.tile_size), self.ampel2)
+                                                self.tile_size, self.tile_size), self.pics["ampel2"])
 
-        for key in self.cars:
-            painter_figures.fillRect(QRect(self.cars[key].pos_x * self.tile_size + self.tile_size // 4,
-                                           self.cars[key].pos_y * self.tile_size + self.tile_size // 4,
+        for auto in self.cars.all_cars:
+            painter_figures.fillRect(QRect(auto.pos_x * self.tile_size + self.tile_size // 4,
+                                           auto.pos_y * self.tile_size + self.tile_size // 4,
                                            self.tile_size // 2, self.tile_size // 2),
-                                     QColor(self.cars[key].colour[0], self.cars[key].colour[1],
-                                            self.cars[key].colour[2]))
+                                     QColor(auto.colour[0], auto.colour[1], auto.colour[2]))
 
     def keyPressEvent(self, event):
         key = event.key()
@@ -209,12 +203,12 @@ class main_application(QWidget):
 
         # reset
         if key == Qt.Key_R:
-            make_cars(self.cars, anzahl=80, right_cars=25)
+            self.cars = All_cars('maps/map1.txt', normal=30, right_cars=20)
 
         # exit
         if key == Qt.Key_Escape:
             sys.exit()
-    
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
