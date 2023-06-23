@@ -160,8 +160,7 @@ class main_application(QWidget):
         for auto in self.cars.all_cars:
             painter_figures.fillRect(QRect(auto.pos_x * self.tile_size + self.tile_size // 4,
                                            auto.pos_y * self.tile_size + self.tile_size // 4,
-                                           self.tile_size // 2, self.tile_size // 2),
-                                     QColor(auto.colour[0], auto.colour[1], auto.colour[2]))
+                                           self.tile_size // 2, self.tile_size // 2), QColor(auto.colour))
 
     def keyPressEvent(self, event):
         key = event.key()
