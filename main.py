@@ -39,6 +39,9 @@ class main_application(QWidget):
 
         self.count_time = 0
 
+        self.offset_x = 0
+        self.offset_y = 0
+
         self.cars = All_cars('maps/map1.txt', normal=30, right_cars=20)
 
         self.timer = QTimer(self)
@@ -73,30 +76,31 @@ class main_application(QWidget):
         self.sim.setGeometry(0, 0, self.width, self.height)
 
         painter_sim = QPainter(self.sim.pixmap())
+        self.ampel_cords = []
 
         for y, i in enumerate(self.cars.street):
             for x, j in enumerate(i):
                 match j:
                     case "-":
-                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                        painter_sim.drawImage(QRect((self.offset_x + x * self.tile_size), (self.offset_y + y * self.tile_size),
                                                     self.tile_size, self.tile_size), self.pics["horizontal"])
                     case "|":
-                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                        painter_sim.drawImage(QRect((self.offset_x + x * self.tile_size), (self.offset_y + y * self.tile_size),
                                                     self.tile_size, self.tile_size), self.pics["vertikal"])
                     case "T":
                         self.ampel_cords.append([y, x])
 
                     case "a":
-                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                        painter_sim.drawImage(QRect((self.offset_x + x * self.tile_size), (self.offset_y + y * self.tile_size),
                                                     self.tile_size, self.tile_size), self.pics["links_oben"])
                     case "b":
-                        painter_sim.drawImage(QRect((x * self.tile_size), (y * self.tile_size),
+                        painter_sim.drawImage(QRect((self.offset_x + x * self.tile_size), (self.offset_y + y * self.tile_size),
                                                     self.tile_size, self.tile_size), self.pics["rechts_oben"])
                     case "c":
-                        painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                        painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                     self.tile_size, self.tile_size), self.pics["links_unten"])
                     case "d":
-                        painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                        painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                     self.tile_size, self.tile_size), self.pics["rechts_unten"])
                     case _:
                         pass
@@ -104,19 +108,19 @@ class main_application(QWidget):
                 if self.show_line:
                     match j:
                         case ">":
-                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                            painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                         self.tile_size, self.tile_size), self.pics["right"])
                         case "<":
-                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                            painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                         self.tile_size, self.tile_size), self.pics["left"])
                         case "v":
-                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                            painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                         self.tile_size, self.tile_size), self.pics["down"])
                         case "^":
-                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                            painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                         self.tile_size, self.tile_size), self.pics["up"])
                         case ".":
-                            painter_sim.drawImage(QRect(x * self.tile_size, y * self.tile_size,
+                            painter_sim.drawImage(QRect(self.offset_x + x * self.tile_size, self.offset_y + y * self.tile_size,
                                                         self.tile_size, self.tile_size), self.pics["point"])
                         case _:
                             pass
@@ -150,17 +154,17 @@ class main_application(QWidget):
 
         if self.ampel_swap:
             for i in self.ampel_cords:
-                painter_figures.drawImage(QRect((i[1] * self.tile_size), (i[0] * self.tile_size),
+                painter_figures.drawImage(QRect((self.offset_x + i[1] * self.tile_size), (self.offset_y + i[0] * self.tile_size),
                                                 self.tile_size, self.tile_size), self.pics["ampel1"])
         else:
             for i in self.ampel_cords:
-                painter_figures.drawImage(QRect((i[1] * self.tile_size), (i[0] * self.tile_size),
+                painter_figures.drawImage(QRect((self.offset_x + i[1] * self.tile_size), (self.offset_y + i[0] * self.tile_size),
                                                 self.tile_size, self.tile_size), self.pics["ampel2"])
 
         for auto in self.cars.all_cars:
-            painter_figures.fillRect(QRect(auto.pos_x * self.tile_size + self.tile_size // 4,
-                                           auto.pos_y * self.tile_size + self.tile_size // 4,
-                                           self.tile_size // 2, self.tile_size // 2), QColor(auto.colour))
+            painter_figures.fillRect(QRect(self.offset_x + auto.pos_x * self.tile_size + self.tile_size // 4,
+                                           self.offset_y + auto.pos_y * self.tile_size + self.tile_size // 4,
+                                           self.tile_size // 2, self.tile_size // 2), QColor(auto.colour[0], auto.colour[1], auto.colour[2]))
 
     def keyPressEvent(self, event):
         key = event.key()
@@ -199,6 +203,20 @@ class main_application(QWidget):
                 self.show_line = False
                 self.first_draw()
                 self.update()
+
+        # move cam
+        if key == Qt.Key_Right:
+            self.offset_x += self.tile_size
+            self.first_draw()
+        if key == Qt.Key_Left:
+            self.offset_x -= self.tile_size
+            self.first_draw()
+        if key == Qt.Key_Up:
+            self.offset_y -= self.tile_size
+            self.first_draw()
+        if key == Qt.Key_Down:
+            self.offset_y += self.tile_size
+            self.first_draw()
 
         # reset
         if key == Qt.Key_R:

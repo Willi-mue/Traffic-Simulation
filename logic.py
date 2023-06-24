@@ -47,12 +47,12 @@ class Car:
     def get_color(self):
         match self.behavior:
             case "normal":
-                return 128, 0, 0
+                return [128, 0, 0]
             case "right":
-                return 0, 128, 0
+                return [0, 128, 0]
             case _:
                 print("Error in get_color")
-                return 0, 0, 128
+                return [0, 0, 128]
 
     def spawn(self):
         x = None
