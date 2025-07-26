@@ -1,4 +1,4 @@
-# Traffic-simulation [ENG]
+# Traffic-Simulation [ENG]
 This is a traffic simulation that works with any map as long as it consists of the following parameters.
 
 ````
