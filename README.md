@@ -73,7 +73,6 @@ traffic_sim/
   maps/             map files
 tests/              pytest tests (logic and window, run headless)
 docs/               screenshots
-.github/workflows/  CI: ruff + pytest on Linux and Windows
 ````
 
 ![Screenshot](docs/screenshot.png)
